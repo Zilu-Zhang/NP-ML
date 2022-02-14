@@ -1,4 +1,4 @@
-drug_name,exc_name,drug_smile,exc_smile,pair_smile,class
+drug_name,excp_name,drug_smile,excp_smile,pair_smile,class
 Sorafenib,caffeine,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1,CN1C=NC2=C1C(=O)N(C(=O)N2C)C,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1.CN1C=NC2=C1C(=O)N(C(=O)N2C)C,0
 Sorafenib,succinic_acid,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1,C(CC(=O)O)C(=O)O,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1.C(CC(=O)O)C(=O)O,0
 Sorafenib,octyl_gallate,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1,CCCCCCCCOC(=O)C1=CC(=C(C(=C1)O)O)O,CNC(=O)C1=NC=CC(OC2=CC=C(NC(=O)NC3=CC(=C(Cl)C=C3)C(F)(F)F)C=C2)=C1.CCCCCCCCOC(=O)C1=CC(=C(C(=C1)O)O)O,0
