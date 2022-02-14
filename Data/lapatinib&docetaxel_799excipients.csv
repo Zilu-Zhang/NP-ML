@@ -1,4 +1,4 @@
-,drug_name,exc_name,drug_smile,exc_smile,pair_smile
+,drug_name,excp_name,drug_smile,excp_smile,pair_smile
 0,Lapatinib,POLYBUTENE_(1400_MW),CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1,C/C=C/C.C=CCC,CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1.C/C=C/C.C=CCC
 1,Lapatinib,Sorbic_acid,CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1,C/C=C/C=C/C(=O)O,CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1.C/C=C/C=C/C(=O)O
 2,Lapatinib,Calcium_sorbate,CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1,C/C=C/C=C/C(=O)[O-].C/C=C/C=C/C(=O)[O-].[Ca+2],CS(=O)(=O)CCNCc1ccc(-c2ccc3ncnc(Nc4ccc(OCc5cccc(F)c5)c(Cl)c4)c3c2)o1.C/C=C/C=C/C(=O)[O-].C/C=C/C=C/C(=O)[O-].[Ca+2]
