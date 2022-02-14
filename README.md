@@ -1,4 +1,4 @@
-# Code and data for further studing drug-excipient nanoparticles
+# Code and data for further studying drug-excipient nanoparticles
 
 this is an example.
 
