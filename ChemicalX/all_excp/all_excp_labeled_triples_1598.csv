@@ -1,4 +1,4 @@
-drug1,drug2,context,label
+drug_1,drug_2,context,label
 Lapatinib,POLYBUTENE_(1400_MW),Nanoparticle,
 Lapatinib,Sorbic_acid,Nanoparticle,
 Lapatinib,Calcium_sorbate,Nanoparticle,
