@@ -30,6 +30,7 @@ from chemicalx.models import DeepDDI
 from chemicalx.models import DeepDDS
 from chemicalx.models import DeepDrug
 from chemicalx.models import DeepSynergy
+from chemicalx.models import MatchMaker
 from chemicalx.models import EPGCNDS
 from chemicalx.models import GCNBMP
 from chemicalx.models import MRGNN
@@ -277,7 +278,7 @@ def validation_pipeline(training_dataset, training_dataset_name,
                                           value=raw_df['Prediction'].to_list(),
                                           column='Prediction_{}'.format(_+1))
 
-       if mode == 'LOEO': # leave-one-excipient-out validation
+        if mode == 'LOEO': # leave-one-excipient-out validation
             for _ in trange(repeats, desc='{}, {}, {}'.format(model_name, parameter[n], mode)):
                 predictions = []
                 for drug in set(training_dataset[2].data['drug_2']):
@@ -422,33 +423,39 @@ args = vars(parser.parse_args())
 training_filepath = args['training']
 training_df = pd.read_csv(training_filepath)
 training_drug_set, training_context_set, training_triple_df = mol_featurization(training_df, training_df.columns[:5])
-training_dataset = [training_drug_set, training_context_set, training_triple_df]
+training_dataset = [DrugFeatureSet().from_dict(training_drug_set), 
+                    ContextFeatureSet().from_dict(training_context_set),
+                    LabeledTriples(training_triple_df)]
 training_dataset_name = args['training_name']
 
-mode = args['mode']
-if 'External' in mode:
+modes = args['mode']
+if 'External' in modes:
     external_filepath = args['external']
     external_df = pd.read_csv(external_filepath)
-    external_drug_set, external_context_set, external_triple_df = mol_featurization(exteral_df, external_df.columns[:5])
+    external_drug_set, external_context_set, external_triple_df = mol_featurization(external_df, external_df.columns[:5])
 
     # generate unified set used for making predictions
     unified_drug_set = merge_drug(training_drug_set, external_drug_set)
     unified_context_set = merge_context(training_context_set, external_context_set)
-    unified_dataset_training = [unified_drug_set, unified_context_set, training_triple_df]
-    unified_dataset_external = [unified_drug_set, unified_context_set, external_triple_df]
+    unified_dataset_training = [DrugFeatureSet().from_dict(unified_drug_set), 
+                                ContextFeatureSet().from_dict(unified_context_set), 
+                                LabeledTriples(training_triple_df)]
+    unified_dataset_external = [DrugFeatureSet().from_dict(unified_drug_set), 
+                                ContextFeatureSet().from_dict(unified_context_set), 
+                                LabeledTriples(external_triple_df)]
 
 valid_output_all, raw_proba_all = generate_list(2)
 
 parameter = [
-             ['hidden_layers_num=9, default', 'hidden_layers_num=5', 'hidden_layers_num=12'],
-             ['dropout_rate=0.5, default', 'dropout_rate=0.25', 'dropout_rate=0.75'],
-             ['dropout_rate=0.5, default', 'dropout_rate=0.25', 'dropout_rate=0.75'],
-             ['dropout_rate=0.5, default', 'dropout_rate=0.25', 'dropout_rate=0.75'],
-             ['dropout_rate=0.1, default', 'dropout_rate=0.05', 'dropout_rate=0.3'],
-             ['hidden_channels=32, default', 'hidden_channels=16', 'hidden_channels=64'],
-             ['hidden_conv_layers=1, default', 'hidden_conv_layers=3', 'hidden_conv_layers=5'],
-             ['hidden_channels=32, default', 'hidden_channels=16', 'hidden_channels=64'],
-             ['head_number=(2,2), default', 'head_number=(1,1)', 'head_number=(4,4)']
+             ['hidden_layers_num=9, default'], ['hidden_layers_num=5'], ['hidden_layers_num=12'],
+             ['dropout_rate=0.5, default'], ['dropout_rate=0.25'], ['dropout_rate=0.75'],
+             ['dropout_rate=0.5, default'], ['dropout_rate=0.25'], ['dropout_rate=0.75'],
+             ['dropout=0.5, default'], ['dropout=0.25'], ['dropout=0.75'],
+             ['dropout_rate=0.1, default'], ['dropout_rate=0.05'], ['dropout_rate=0.3'],
+             ['hidden_channels=32, default'], ['hidden_channels=16'], ['hidden_channels=64'],
+             ['hidden_conv_layers=1, default'], ['hidden_conv_layers=3'], ['hidden_conv_layers=5'],
+             ['hidden_channels=32, default'], ['hidden_channels=16'], ['hidden_channels=64'],
+             ['head_number=(2,2), default'], ['head_number=(1,1)'], ['head_number=(4,4)']
              ]
 ## executation
 drug_channels = 2048
@@ -458,8 +465,8 @@ for mode in modes:
         model = [
             ## feature/FP-based models
             DeepDDI(drug_channels=drug_channels, hidden_layers_num=9), # default
-            DeepDDI(drop_channels=drug_channels, hidden_layers_num=5),
-            DeepDDI(drop_channels=drug_channels, hidden_layers_num=12),
+            DeepDDI(drug_channels=drug_channels, hidden_layers_num=5),
+            DeepDDI(drug_channels=drug_channels, hidden_layers_num=12),
 
             DeepSynergy(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.5), # default
             DeepSynergy(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.25),
@@ -470,9 +477,9 @@ for mode in modes:
             MatchMaker(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.75),
 
             ## graph-based models
-            DeepDDS(context_channels=context_channels, dropout_rate=0.5), # default
-            DeepDDS(context_channels=context_channels, dropout_rate=0.25),
-            DeepDDS(context_channels=context_channels, dropout_rate=0.75),
+            DeepDDS(context_channels=context_channels, dropout=0.5), # default
+            DeepDDS(context_channels=context_channels, dropout=0.25),
+            DeepDDS(context_channels=context_channels, dropout=0.75),
 
             DeepDrug(dropout_rate=0.1), # default
             DeepDrug(dropout_rate=0.05),
@@ -509,8 +516,8 @@ for mode in modes:
         model = [
             ## feature/FP-based models
             DeepDDI(drug_channels=drug_channels, hidden_layers_num=9), # default
-            DeepDDI(drop_channels=drug_channels, hidden_layers_num=5),
-            DeepDDI(drop_channels=drug_channels, hidden_layers_num=12),
+            DeepDDI(drug_channels=drug_channels, hidden_layers_num=5),
+            DeepDDI(drug_channels=drug_channels, hidden_layers_num=12),
 
             DeepSynergy(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.5), # default
             DeepSynergy(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.25),
@@ -521,9 +528,9 @@ for mode in modes:
             MatchMaker(context_channels=context_channels,drug_channels=drug_channels, dropout_rate=0.75),
 
             ## graph-based models
-            DeepDDS(context_channels=context_channels, dropout_rate=0.5), # default
-            DeepDDS(context_channels=context_channels, dropout_rate=0.25),
-            DeepDDS(context_channels=context_channels, dropout_rate=0.75),
+            DeepDDS(context_channels=context_channels, dropout=0.5), # default
+            DeepDDS(context_channels=context_channels, dropout=0.25),
+            DeepDDS(context_channels=context_channels, dropout=0.75),
 
             DeepDrug(dropout_rate=0.1), # default
             DeepDrug(dropout_rate=0.05),
